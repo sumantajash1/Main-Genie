@@ -8,6 +8,27 @@ function getTitleSlug() {
   return slug;
 }
 
+// Function to extract code from the LeetCode IDE/editor
+function getLeetCodeIDECode() {
+  // Try Monaco editor (LeetCode uses Monaco)
+  const monaco = document.querySelector('.monaco-editor');
+  if (monaco) {
+    // Monaco stores code in .view-lines > div
+    const lines = monaco.querySelectorAll('.view-lines > div');
+    const code = Array.from(lines).map(line => line.innerText).join('\n');
+    console.log('[LeetGenie] IDE code (Monaco):', code);
+    return code;
+  }
+  // Fallback: try textarea or other selectors
+  const textarea = document.querySelector('textarea');
+  if (textarea) {
+    console.log('[LeetGenie] IDE code (textarea):', textarea.value);
+    return textarea.value;
+  }
+  console.warn('[LeetGenie] IDE code not found.');
+  return '';
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'scrape_dsa_problem') {
     console.log('[LeetGenie] Received scrape_dsa_problem message');
@@ -55,6 +76,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then(data => {
         const html = data?.data?.question?.content || '';
         console.log('[LeetGenie] LeetCode API raw HTML:', html);
+        // Log the IDE code
+        getLeetCodeIDECode();
         sendResponse({ description: html });
       })
       .catch(err => {
