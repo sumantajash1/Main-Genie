@@ -2,8 +2,14 @@
   "manifest_version": 3,
   "name": "DSA Main Function Generator",
   "version": "1.0.0",
-  "description": "Generate main function for DSA problems using AI, based on the problem statement and code in the IDE.",
-  "permissions": ["activeTab", "scripting"],
+  "description": "Generate main function for DSA problems using AI…",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.leetcode.com/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -14,8 +20,9 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": ["*://*.leetcode.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
   "icons": {
@@ -23,4 +30,4 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   }
-} 
+}
