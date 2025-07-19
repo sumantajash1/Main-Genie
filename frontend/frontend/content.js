@@ -76,9 +76,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then(data => {
         const html = data?.data?.question?.content || '';
         console.log('[LeetGenie] LeetCode API raw HTML:', html);
-        // Log the IDE code
-        getLeetCodeIDECode();
-        sendResponse({ description: html });
+        const ideCode = getLeetCodeIDECode();
+        // Send to backend
+        fetch('http://localhost:8080/new-genie/extension/generate-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            problemStatement: html,
+            ideCode: ideCode
+          })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error('Backend error: ' + res.status);
+            return res.text();
+          })
+          .then(genieString => {
+            sendResponse({ description: genieString });
+          })
+          .catch(err => {
+            console.error('[LeetGenie] Backend error:', err);
+            sendResponse({ description: 'Error: Could not generate code.' });
+          });
       })
       .catch(err => {
         console.error('[LeetGenie] LeetCode API error:', err);
