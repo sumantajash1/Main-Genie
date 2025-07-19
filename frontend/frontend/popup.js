@@ -15,14 +15,28 @@ document
       tab.id,
       { action: 'scrape_dsa_problem' },
       (response) => {
-        const out = document.getElementById('output');
+        const outBox = document.getElementById('output-box');
         if (chrome.runtime.lastError) {
-          out.textContent = 'Error: ' + chrome.runtime.lastError.message;
+          outBox.textContent = 'Error: ' + chrome.runtime.lastError.message;
         } else if (!response || !response.description) {
-          out.textContent = 'No description found on this page.';
+          outBox.textContent = 'No output found.';
         } else {
-          out.textContent = response.description;
+          outBox.textContent = response.description;
         }
       }
     );
   });
+
+// Copy button logic
+const copyBtn = document.getElementById('copy-btn');
+const outBox = document.getElementById('output-box');
+copyBtn.addEventListener('click', () => {
+  if (!outBox.textContent) return;
+  navigator.clipboard.writeText(outBox.textContent).then(() => {
+    const original = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      copyBtn.textContent = original;
+    }, 1000);
+  });
+});

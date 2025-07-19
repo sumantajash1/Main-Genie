@@ -33,8 +33,8 @@ public class AiService {
         List<Map<String, String>> messages = List.of(Map.of("role", "user", "content", prompt));
         Map<String, Object> requestBody = Map.of(
                 "messages", messages,
-                "model", "llama-3.1-8b-instant",
-                "max_completion_tokens", 8000
+                "model", "meta-llama/llama-4-scout-17b-16e-instruct"
+//                "max_completion_tokens", 8000
         );
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
         try {
@@ -44,8 +44,8 @@ public class AiService {
             List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             String content = (String) message.get("content");
-            //System.out.println(content);
-            String returnBody = content.substring(content.indexOf('$') + 1, content.lastIndexOf('$')).trim();
+            System.out.println(content);
+            String returnBody= content.substring(content.indexOf('`') + 7, content.lastIndexOf('`') - 3).trim();
             System.out.println(returnBody);
             return returnBody;
 //            return content;

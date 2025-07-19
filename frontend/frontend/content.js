@@ -29,6 +29,13 @@ function getLeetCodeIDECode() {
   return '';
 }
 
+// Helper to convert HTML to plain text
+function htmlToPlainText(html) {
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+  return tempDiv.innerText.trim();
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'scrape_dsa_problem') {
     console.log('[LeetGenie] Received scrape_dsa_problem message');
@@ -70,12 +77,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       body: JSON.stringify(fetchBody)
     })
       .then(res => {
-        console.log('[LeetGenie] Received response from LeetCode API:', res);
+        //console.log('[LeetGenie] Received response from LeetCode API:', res);
         return res.json();
       })
       .then(data => {
         const html = data?.data?.question?.content || '';
-        console.log('[LeetGenie] LeetCode API raw HTML:', html);
+        const plainText = htmlToPlainText(html);
+        console.log('[LeetGenie] LeetCode API raw HTML to plain text:', plainText);
+        //console.log('[LeetGenie] LeetCode API raw HTML:', html);
         const ideCode = getLeetCodeIDECode();
         // Send to backend
         fetch('http://localhost:8080/new-genie/extension/generate-code', {
@@ -84,7 +93,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            problemStatement: html,
+            problemStatement: plainText, // Use plainText here
             ideCode: ideCode
           })
         })
