@@ -44,9 +44,9 @@ public class AiService {
             List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
             Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
             String content = (String) message.get("content");
-            System.out.println(content);
+//            System.out.println(content);
             String returnBody= content.substring(content.indexOf('`') + 7, content.lastIndexOf('`') - 3).trim();
-            System.out.println(returnBody);
+//            System.out.println(returnBody);
             return returnBody;
 //            return content;
         } catch (Exception e) {
